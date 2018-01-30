@@ -55,6 +55,7 @@ var ProxyFormController = function(id) {
  * @enum {string}
  */
 ProxyFormController.ProxyTypes = {
+  SEARCH: 'search',
   AUTO: 'auto_detect',
   PAC: 'pac_script',
   DIRECT: 'direct',
@@ -590,6 +591,8 @@ ProxyFormController.prototype = {
   generateProxyConfig_: function() {
     var active = document.getElementsByClassName('active')[0];
     switch (active.id) {
+      case ProxyFormController.ProxyTypes.SEARCH:
+        return {mode: 'search'};
       case ProxyFormController.ProxyTypes.SYSTEM:
         return {mode: 'system'};
       case ProxyFormController.ProxyTypes.DIRECT:
@@ -674,9 +677,7 @@ ProxyFormController.prototype = {
 
     // If we can't access Incognito settings, throw a message and return.
     if (!this.isAllowedIncognitoAccess_) {
-      var msg = "I'm sorry, Dave, I'm afraid I can't do that. Give me access " +
-                "to Incognito settings by checking the checkbox labeled " +
-                "'Allow in Incognito mode', which is visible at " +
+      var msg = "Разрешите использование в режиме инкогнито " +
                 "chrome://extensions.";
       this.generateAlert_(msg, false);
       return;

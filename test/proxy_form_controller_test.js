@@ -24,7 +24,8 @@ chrome = chrome || {
 
 var fixture = document.getElementById('fixture');
 var baselineHTML = fixture.innerHTML;
-var groupIDs = [ProxyFormController.ProxyTypes.DIRECT,
+var groupIDs = [ProxyFormController.ProxyTypes.SEARCH,
+                ProxyFormController.ProxyTypes.DIRECT,
                 ProxyFormController.ProxyTypes.SYSTEM,
                 ProxyFormController.ProxyTypes.PAC,
                 ProxyFormController.ProxyTypes.FIXED];
@@ -57,13 +58,13 @@ var proxyform = new Test.Unit.Runner({
     chrome.proxy = {
       settings: {
         get: mockFunctionFactory({
-               value: {mode: 'system' },
+               value: {mode: 'search' },
                levelOfControl: 'controllable_by_this_extension' }),
         clear: mockFunctionFactory({
-                 value: {mode: 'system' },
+                 value: {mode: 'search' },
                  levelOfControl: 'controllable_by_this_extension' }),
         set: mockFunctionFactory({
-               value: {mode: 'system' },
+               value: {mode: 'search' },
                levelOfControl: 'controllable_by_this_extension' })
       }
     };
@@ -152,6 +153,24 @@ var proxyform = new Test.Unit.Runner({
     });
   },
 
+  testSetupFormSearch: function() {
+    chrome.proxy.settings.get =
+        mockFunctionFactory({value: {mode: 'search'},
+             levelOfControl: 'controllable_by_this_extension'}, true);
+
+    fixture.innerHTML = baselineHTML;
+    this.controller_ = new ProxyFormController('proxyForm');
+    // Wait for async calls to fire
+    this.wait(100, function() {
+      this.assertEqual(
+          2,
+          chrome.proxy.settings.get.getCallList().length);
+      this.assert(
+          document.getElementById(ProxyFormController.ProxyTypes.SEARCH)
+              .classList.contains('active'));
+    });
+  },
+
   testSetupFormDirect: function() {
     chrome.proxy.settings.get =
         mockFunctionFactory({value: {mode: 'direct'},
@@ -217,6 +236,16 @@ var proxyform = new Test.Unit.Runner({
     });
     this.assert(
         document.getElementById(ProxyFormController.ProxyTypes.PAC)
+            .classList.contains('active'));
+   
+    // SEARCH
+    this.controller_.recalcFormValues_({
+      mode: ProxyFormController.ProxyTypes.SEARCH,
+      rules: {},
+      pacScript: ''
+    });
+    this.assert(
+        document.getElementById(ProxyFormController.ProxyTypes.SEARCH)
             .classList.contains('active'));
 
     // DIRECT
@@ -375,6 +404,15 @@ var proxyform = new Test.Unit.Runner({
         this.controller_.bypassList,
         ['1.example.com', '2.example.com', '3.example.com']);
   },
+
+  // Test that "search" rules are correctly generated
+  testProxyRulesGenerationSearch: function() {
+    this.controller_.changeActive_(
+        document.getElementById(ProxyFormController.ProxyTypes.SEARCH));
+
+    this.assertHashEqual(
+        {mode: 'search'},
+        this.controller_.generateProxyConfig_());
 
   // Test that "system" rules are correctly generated
   testProxyRulesGenerationSystem: function() {

@@ -37,7 +37,6 @@ form.offscreen {
 
 fieldset {
   border: 0;
-  margin: 0;
   padding: 0;
   position: relative;
 }
@@ -77,6 +76,7 @@ section fieldset:not(:first-child):not(:last-child) {
   max-height: 1.6em;
   overflow: hidden;
   transition: all 0.5s ease;
+  margin-top: 5px;
 }
 
 section.single fieldset:not(:first-child):not(:last-child) {
@@ -93,6 +93,7 @@ section fieldset:last-child label {
 
 section fieldset:last-child textarea {
   width: 412px;
+  margin-top: 5px;
 }
 
 section > fieldset {
@@ -113,17 +114,17 @@ input[type='url']:invalid:not(:active):not(:focus) {
 }
 
 input:invalid:not(:active):not(:focus):after {
-  content: "This isn't a valid URL!";
+  content: "Не действительный URL!";
   display:block;
 }
 
 input[type="checkbox"] {
-  margin: 5px 0 5px 35px;
+  margin: 4px 0px 12px 40px;
 }
 
 input[type="text"] {
   width: 200px;
-  margin: 0 10px 0 0;
+  height: 14px;
 }
 
 input.port {
